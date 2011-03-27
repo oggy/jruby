@@ -30,6 +30,7 @@ package org.jruby.internal.runtime.methods;
 
 import org.jruby.RubyModule;
 import org.jruby.runtime.Block;
+import org.jruby.runtime.PositionAware;
 import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.Visibility;
 import org.jruby.runtime.builtin.IRubyObject;
@@ -38,7 +39,7 @@ import org.jruby.runtime.builtin.IRubyObject;
  * 
  * @author jpetersen
  */
-public class WrapperMethod extends DynamicMethod {
+public class WrapperMethod extends DynamicMethod implements PositionAware {
     private DynamicMethod method;
 
     /**
@@ -96,5 +97,21 @@ public class WrapperMethod extends DynamicMethod {
 
     public long getSerialNumber() {
         return method.getSerialNumber();
+    }
+
+    public String getFile() {
+        DynamicMethod realMethod = method.getRealMethod();
+        if (realMethod instanceof PositionAware)
+            return ((PositionAware)realMethod).getFile();
+        else
+            return null;
+    }
+
+    public int getLine() {
+        DynamicMethod realMethod = method.getRealMethod();
+        if (realMethod instanceof PositionAware)
+            return ((PositionAware)realMethod).getLine();
+        else
+            return -1;
     }
 }
